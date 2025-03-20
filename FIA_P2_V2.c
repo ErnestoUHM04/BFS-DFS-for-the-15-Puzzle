@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
 
 #define N 4 
 #define MAX_DEPTH 80
@@ -73,6 +75,11 @@ void EnQueue(Cola c, Move move);
 void DeQueue(Cola c, Move* moveOut);
 
 int main(){
+    //Variables para medir el tiempo de CPU
+    clock_t start, end;
+    double cpu_time_used;
+    
+
     Pila path = NULL;
     if(CrearPila(&path) == 0)
         return -1;//ERROR if the stack isnt properly created
@@ -86,6 +93,18 @@ int main(){
     // 80 is the max movements for the 15 puzzle
     int** matrix = CreateMatrix(n);
     //for the demo lets use a 3x3 matrix
+    // Hard Example
+    
+    int demoMatrix[N][N] = {
+        //0 -> n  2nd []    [][this one]
+        {1, 2, 3, 4}, // 0
+        {5, 8, 10, 12}, // ->
+        {9, 6, 7, 15}, // n
+        {0, 13, 14, 11} // 1st []
+    };
+    
+    //Easy Example
+    /*
     int demoMatrix[N][N] = {
         //0 -> n  2nd []    [][this one]
         {1, 2, 3, 4}, // 0
@@ -93,7 +112,7 @@ int main(){
         {9, 10, 11, 7}, // n
         {13, 14, 0, 15} // 1st []
     };
-    
+    */
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             matrix[i][j] = demoMatrix[i][j];
@@ -118,7 +137,7 @@ int main(){
         printf("\n\tSolve puzzle by \n1. DFS\n2. BFS\n");
         scanf("%d", &swt);
     }while(swt > 2 || swt <= 0);
-
+    start = clock(); // Iniciar el contador (CPU)
     if (swt == 1){
         // Depth First Search
         if (DFS_Solution(matrix, n, z_i, z_j, z_i, z_j, 0, max_depth, path)){ // we start from the position of the 0
@@ -134,7 +153,12 @@ int main(){
             printf("\n\tNo solution found\n");
         }
     }
-    
+    // Detener el contador
+    end = clock(); //Para el tiempo de CPU
+    // Calcular el tiempo de CPU utilizado
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("\nExecution time was: %f seconds\n", cpu_time_used);
+
     /*
     if (BFS_Solution(matrix, n, z_i, z_j, queue, path)){ // we start from the position of the 0
         //VerPila(path);
